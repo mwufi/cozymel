@@ -2,9 +2,20 @@
 
 import { useState, useRef } from 'react';
 import Draggable from 'react-draggable';
+import Diamond from '@/components/DiamondDisplay';
 
-const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElementId }) => (
-  <Draggable key={id}>
+import { useEffect } from 'react';
+
+const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElementId, selectedElementId }) => {
+  const isEditing = selectedElementId === id;
+
+  useEffect(() => {
+    if (isEditing) {
+      // Add any additional logic when the item becomes editing mode
+    }
+  }, [isEditing]);
+
+  return isEditing ? (
     <div
       style={{ position: 'absolute', top: y, left: x, transform: 'translate(-50%, -50%)' }}
       onMouseDown={(e) => handleMouseDown(e, id)}
@@ -12,8 +23,20 @@ const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElement
     >
       {children}
     </div>
-  </Draggable>
-);
+  ) : (
+    <Draggable key={id}>
+      <div
+        style={{ position: 'absolute', top: y, left: x, transform: 'translate(-50%, -50%)' }}
+        onMouseDown={(e) => {
+          // Prevent the default behavior of the onMouseDown event
+          e.stopPropagation();
+        }}
+      >
+        {children}
+      </div>
+    </Draggable>
+  );
+};
 
 const TextAreaThatHandlesBackspace = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -90,6 +113,8 @@ export default function HomePage() {
       setElements([...elements, { type: 'text', id: Date.now(), x, y }]);
     } else if (e.key === 'p') {
       setElements([...elements, { type: 'image', id: Date.now(), x, y }]);
+    } else if (e.key === 'd') {
+      setElements([...elements, { type: 'diamond', id: Date.now(), x, y }]);
     } else if (e.key === 'v') {
       setElements([...elements, { type: 'video', id: Date.now(), x, y }]);
     } else if (e.key === 'a') {
@@ -137,6 +162,8 @@ export default function HomePage() {
             return <Postcard />;
           } else if (el.type === 'video') {
             return <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls />;
+          } else if (el.type === 'diamond') {
+            return <Diamond />;
           } else if (el.type === 'image') {
             return (
               <div style={{ width: '400px' }}>
