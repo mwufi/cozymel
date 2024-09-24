@@ -7,10 +7,10 @@ interface DraggableItemProps {
   children: React.ReactNode;
   x: number;
   y: number;
-  id: number;
-  handleMouseDown?: (e: React.MouseEvent<HTMLDivElement>, id: number) => void;
-  setSelectedElementId: (id: number) => void;
-  onUpdate?: (id: number, x: number, y: number) => void;
+  id: string;
+  handleMouseDown?: (e: React.MouseEvent<HTMLDivElement>, id: string) => void;
+  setSelectedElementId: (id: string) => void;
+  onUpdate?: (id: string, x: number, y: number) => void;
 }
 
 const DraggableItem: React.FC<DraggableItemProps> = ({ children, x, y, id, handleMouseDown, setSelectedElementId, onUpdate }) => {
@@ -18,6 +18,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ children, x, y, id, handl
 
   const handleDrag = (e: any, data: any) => {
     if (onUpdate) {
+      // console.log("[DraggableItem] ...", id, x + data.deltaX, y + data.deltaY)
       onUpdate(id, x + data.deltaX, y + data.deltaY);
     }
   };

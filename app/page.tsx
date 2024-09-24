@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-import { saveElements } from '@/lib/utils';
+import { saveElements, updateElement, updateMove } from '@/lib/utils';
 import { toast } from 'sonner';
 import { db } from '@/lib/instant';
 import DraggableItem from '@/components/core/DraggableItem';
@@ -28,19 +28,26 @@ function Viewer({ pageId }: ViewerProps) {
   const { isLoading, data, error } = db.useQuery(query)
 
   const [elements, setElements] = useAtom(elementsAtom);
-  const [selectedElementId, setSelectedElementId] = useState<number | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!isLoading && data) {
-      console.log("data changed", data.pages[0].content)
-      const elementsArray = data.pages[0].content as Element[];
-      const elementsMap = elementsArray.reduce((acc, element) => {
-        acc[element.id] = element;
-        return acc;
-      }, {} as Record<number, Element>);
-      console.log("elementsMap", elementsMap)
-      setElements(elementsMap);
+      if (Array.isArray(data.pages[0].content)) {
+        const elementsArray = data.pages[0].content as Element[];
+        const elementsMap = elementsArray.reduce((acc, element) => {
+          acc[element.id] = element;
+          return acc;
+        }, {} as Record<string, Element>);
+        console.log("elementsMap", elementsMap)
+        setElements(elementsMap);
+      } else {
+        const filteredContent = Object.fromEntries(
+          Object.entries(data.pages[0].content as Record<string, Element>).filter(([key, value]) => value !== undefined)
+        );
+        console.log("filteredContent", filteredContent)
+        setElements(filteredContent);
+      }
     }
   }, [isLoading, data])
 
@@ -52,10 +59,13 @@ function Viewer({ pageId }: ViewerProps) {
     const { x, y } = mousePosition.current;
 
     function addElement(type: string, additionalProps?: Partial<Element>) {
+      const newId = Date.now().toString();
+      const newElement = { type, id: newId, x, y, ...additionalProps };
+
       setElements(prevElements => {
-        const newElement = { type, id: Date.now(), x, y, ...additionalProps };
-        return { ...prevElements, [newElement.id]: newElement };
+        return { ...prevElements, [newId]: newElement };
       });
+      updateElement(pageId, newId, newElement);
     }
 
     if (e.key === 't') {
@@ -76,8 +86,11 @@ function Viewer({ pageId }: ViewerProps) {
     }
   };
 
-  function moveElement(id: number, x: number, y: number) {
+  function moveElement(id: string, x: number, y: number) {
+    if (!id || id === "undefined" || !elements[id]) return;
+
     console.log("moving element", id, x, y)
+    updateMove(pageId, id, x, y);
     setElements(elements => {
       const newElements = { ...elements };
       newElements[id].x = x;
@@ -118,17 +131,17 @@ function Viewer({ pageId }: ViewerProps) {
       >
         Save
       </button>
-      {Object.values(elements).map(el => {
+      {Object.entries(elements).map(([id, el]) => {
         return (
           <DraggableItem
-            key={el.id}
+            key={id}
             x={el.x}
             y={el.y}
-            id={el.id}
+            id={id}
             setSelectedElementId={setSelectedElementId}
             onUpdate={(id, x, y) => moveElement(id, x, y)}
           >
-            <div>{el.x}, {el.y}</div>
+            {/* <div>{id} - {el.x}, {el.y}</div> */}
             {renderElement(el)}
           </DraggableItem>
         );

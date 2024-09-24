@@ -1,10 +1,14 @@
-
 export interface Element {
+  id: string;
   type: string;
-  id: number;
   x: number;
   y: number;
-  image?: string;
-  endX?: number;
-  endY?: number;
+}
+
+export interface ImageElement extends Element {
+  image: string;
+}
+
+export interface TextElement extends Element {
+  text: string;
 }
