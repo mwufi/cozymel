@@ -3,6 +3,31 @@
 import { useState, useRef } from 'react';
 import Draggable from 'react-draggable';
 
+const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElementId }) => (
+  <Draggable key={id}>
+    <div
+      style={{ position: 'absolute', top: y, left: x, transform: 'translate(-50%, -50%)' }}
+      onMouseDown={(e) => handleMouseDown(e, id)}
+      onClick={() => setSelectedElementId(id)}
+    >
+      {children}
+    </div>
+  </Draggable>
+);
+
+const TextAreaThatHandlesBackspace = () => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    e.stopPropagation();
+    if (e.key === 'Backspace') {
+      console.log('Backspace key pressed');
+    }
+  };
+
+  return (
+    <textarea className="p-4 bg-gray-100 rounded-lg" onKeyDown={handleKeyDown} />
+  );
+};
+
 export default function HomePage() {
   const [elements, setElements] = useState([]);
   const [selectedElementId, setSelectedElementId] = useState(null);
@@ -59,26 +84,34 @@ export default function HomePage() {
       {elements.map(el => {
         if (el.type === 'text') {
           return (
-            <Draggable key={el.id}>
-              <textarea
-                style={{ position: 'absolute', top: el.y, left: el.x, transform: 'translate(-50%, -50%)' }}
-                onMouseDown={(e) => handleMouseDown(e, el.id)}
-                onClick={() => setSelectedElementId(el.id)}
-              />
-            </Draggable>
+            <DraggableItem
+              key={el.id}
+              x={el.x}
+              y={el.y}
+              id={el.id}
+              handleMouseDown={handleMouseDown}
+              setSelectedElementId={setSelectedElementId}
+            >
+              <TextAreaThatHandlesBackspace />
+            </DraggableItem>
           );
         } else if (el.type === 'image') {
           return (
-            <Draggable key={el.id}>
+            <DraggableItem
+              key={el.id}
+              x={el.x}
+              y={el.y}
+              id={el.id}
+              handleMouseDown={handleMouseDown}
+              setSelectedElementId={setSelectedElementId}
+            >
               <img
                 src="https://picsum.photos/200"
                 alt="Random"
-                style={{ position: 'absolute', top: el.y, left: el.x, transform: 'translate(-50%, -50%)', userSelect: 'none' }}
+                style={{ userSelect: 'none' }}
                 draggable={false}
-                onMouseDown={(e) => handleMouseDown(e, el.id)}
-                onClick={() => setSelectedElementId(el.id)}
               />
-            </Draggable>
+            </DraggableItem>
           );
         } else if (el.type === 'arrow') {
           return (
