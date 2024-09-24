@@ -29,9 +29,9 @@ const TextAreaThatHandlesBackspace = () => {
 };
 
 export default function HomePage() {
-  const [elements, setElements] = useState([]);
-  const [selectedElementId, setSelectedElementId] = useState(null);
-  const arrowRef = useRef(null);
+  const [elements, setElements] = useState<any[]>([]);
+  const [selectedElementId, setSelectedElementId] = useState<number | null>(null);
+  const arrowRef = useRef<{ id: number; startX: number; startY: number } | null>(null);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   const handleMouseMove = (e) => {
