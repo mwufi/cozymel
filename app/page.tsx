@@ -29,13 +29,18 @@ function Viewer({ pageId }: ViewerProps) {
 
   const [elements, setElements] = useAtom(elementsAtom);
   const [selectedElementId, setSelectedElementId] = useState<number | null>(null);
-  const arrowRef = useRef<{ id: number; startX: number; startY: number } | null>(null);
   const mousePosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!isLoading && data) {
       console.log("data changed", data.pages[0].content)
-      setElements(data.pages[0].content as Element[])
+      const elementsArray = data.pages[0].content as Element[];
+      const elementsMap = elementsArray.reduce((acc, element) => {
+        acc[element.id] = element;
+        return acc;
+      }, {} as Record<number, Element>);
+      console.log("elementsMap", elementsMap)
+      setElements(elementsMap);
     }
   }, [isLoading, data])
 
@@ -47,7 +52,10 @@ function Viewer({ pageId }: ViewerProps) {
     const { x, y } = mousePosition.current;
 
     function addElement(type: string, additionalProps?: Partial<Element>) {
-      setElements(prevElements => [...prevElements, { type, id: Date.now(), x, y, ...additionalProps }]);
+      setElements(prevElements => {
+        const newElement = { type, id: Date.now(), x, y, ...additionalProps };
+        return { ...prevElements, [newElement.id]: newElement };
+      });
     }
 
     if (e.key === 't') {
@@ -59,10 +67,24 @@ function Viewer({ pageId }: ViewerProps) {
     } else if (e.key === 'v') {
       addElement('video');
     } else if (e.key === 'Backspace' && selectedElementId !== null) {
-      setElements(elements.filter(el => el.id !== selectedElementId));
+      setElements(elements => {
+        const newElements = { ...elements };
+        delete newElements[selectedElementId];
+        return newElements;
+      });
       setSelectedElementId(null);
     }
   };
+
+  function moveElement(id: number, x: number, y: number) {
+    console.log("moving element", id, x, y)
+    setElements(elements => {
+      const newElements = { ...elements };
+      newElements[id].x = x;
+      newElements[id].y = y;
+      return newElements;
+    });
+  }
 
   return (
     <div
@@ -96,7 +118,7 @@ function Viewer({ pageId }: ViewerProps) {
       >
         Save
       </button>
-      {elements?.map(el => {
+      {Object.values(elements).map(el => {
         return (
           <DraggableItem
             key={el.id}
@@ -104,7 +126,9 @@ function Viewer({ pageId }: ViewerProps) {
             y={el.y}
             id={el.id}
             setSelectedElementId={setSelectedElementId}
+            onUpdate={(id, x, y) => moveElement(id, x, y)}
           >
+            <div>{el.x}, {el.y}</div>
             {renderElement(el)}
           </DraggableItem>
         );

@@ -20,3 +20,11 @@ export function saveElements(elements: any) {
 
   return pageId
 }
+
+export function moveElement(pageId: string, elementId: number, newX: number, newY: number) {
+  db.transact([
+    tx.pages[pageId].update({
+      content: elements
+    })
+  ]);
+}
