@@ -6,36 +6,18 @@ import Diamond from '@/components/DiamondDisplay';
 
 import { useEffect } from 'react';
 
-const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElementId, selectedElementId }) => {
-  const isEditing = selectedElementId === id;
-
-  useEffect(() => {
-    if (isEditing) {
-      // Add any additional logic when the item becomes editing mode
-    }
-  }, [isEditing]);
-
-  return isEditing ? (
-    <div
-      style={{ position: 'absolute', top: y, left: x, transform: 'translate(-50%, -50%)' }}
-      onMouseDown={(e) => handleMouseDown(e, id)}
-      onClick={() => setSelectedElementId(id)}
-    >
-      {children}
-    </div>
-  ) : (
+const DraggableItem = ({ children, x, y, id, handleMouseDown, setSelectedElementId }) => {
+  return (
     <Draggable key={id}>
       <div
         style={{ position: 'absolute', top: y, left: x, transform: 'translate(-50%, -50%)' }}
-        onMouseDown={(e) => {
-          // Prevent the default behavior of the onMouseDown event
-          e.stopPropagation();
-        }}
+        onMouseDown={(e) => handleMouseDown(e, id)}
+        onClick={() => setSelectedElementId(id)}
       >
         {children}
       </div>
     </Draggable>
-  );
+  )
 };
 
 const TextAreaThatHandlesBackspace = () => {
