@@ -6,10 +6,10 @@ import TextAreaThatHandlesBackspace from '@/components/TextAreaThatHandlesBacksp
 import Postcard from '@/components/Postcard';
 import BarChart from '@/components/charts/BarChart';
 
-export function renderElement(el: Element, updateElement: (element: Element) => void) {
+export function renderElement(el: Element, updateElement: (element: Element) => void, deleteElement: () => void) {
   switch (el.type) {
     case 'text':
-      return <TextAreaThatHandlesBackspace element={el} updateElement={updateElement} />;
+      return <TextAreaThatHandlesBackspace element={el} updateElement={updateElement} deleteElement={deleteElement} />;
     case 'postcard':
       return <Postcard />;
     case 'video':

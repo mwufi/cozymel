@@ -2,7 +2,7 @@
 
 import { Element } from '@/app/types';
 
-const TextAreaThatHandlesBackspace = ({ element, updateElement }: { element: Element, updateElement: (element: Element) => void }) => {
+const TextAreaThatHandlesBackspace = ({ element, updateElement, deleteElement }: { element: Element, updateElement: (element: Element) => void, deleteElement: () => void }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.stopPropagation();
     if (e.key === 'Backspace') {
@@ -11,7 +11,11 @@ const TextAreaThatHandlesBackspace = ({ element, updateElement }: { element: Ele
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateElement({ ...element, text: e.target.value });
+    if (!element.text || element.text.includes('delete fr')) {
+      deleteElement();
+    } else {
+      updateElement({ ...element, text: e.target.value });
+    }
   };
 
   return (

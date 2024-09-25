@@ -66,6 +66,7 @@ function Viewer({ pageId }: ViewerProps) {
       const newElement = { type, id: newId, x, y, ...additionalProps };
       updateElement(pageId, newId, newElement);
     }
+    if (e.ctrlKey || e.metaKey) return;
 
     if (e.key === 't') {
       addElement('text');
@@ -90,6 +91,18 @@ function Viewer({ pageId }: ViewerProps) {
     updateMove(pageId, id, x, y);
   }
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const pasteData = e.clipboardData.getData('text');
+    const { x, y } = mousePosition.current;
+
+    if (pasteData) {
+      const newId = Date.now().toString();
+      updateElement(pageId, newId, {
+        type: 'text', id: newId, x, y, text: pasteData
+      });
+    }
+  };
+
   return (
     <div
       style={{
@@ -101,8 +114,10 @@ function Viewer({ pageId }: ViewerProps) {
       }}
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      onPaste={handlePaste}
       onMouseMove={handleMouseMove}
     >
+
       <button
         style={{
           position: 'absolute',
@@ -133,7 +148,7 @@ function Viewer({ pageId }: ViewerProps) {
             onUpdate={(id, x, y) => moveElement(id, x, y)}
           >
             {/* <div>{id} - {el.x}, {el.y}</div> */}
-            {renderElement(el, (element) => updateElement(pageId, id, element))}
+            {renderElement(el, (element) => updateElement(pageId, id, element), () => deleteElement(pageId, id))}
           </DraggableItem>
         );
       })}
