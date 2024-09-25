@@ -69,6 +69,8 @@ function Viewer({ pageId }: ViewerProps) {
 
     if (e.key === 't') {
       addElement('text');
+    } else if (e.key === 'b') {
+      addElement('bar_chart');
     } else if (e.key === 'p') {
       addElement('image');
     } else if (e.key === 'd') {

@@ -4,6 +4,7 @@ import Diamond from '@/components/DiamondDisplay';
 import { Element } from '@/app/types';
 import TextAreaThatHandlesBackspace from '@/components/TextAreaThatHandlesBackspace';
 import Postcard from '@/components/Postcard';
+import BarChart from '@/components/charts/BarChart';
 
 export function renderElement(el: Element, updateElement: (element: Element) => void) {
   switch (el.type) {
@@ -34,6 +35,8 @@ export function renderElement(el: Element, updateElement: (element: Element) => 
           />
         </div>
       );
+    case 'bar_chart':
+      return <BarChart />;
     default:
       return null;
   }
