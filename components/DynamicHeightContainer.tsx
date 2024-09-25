@@ -27,8 +27,9 @@ const DynamicHeightContainer = ({ children, ...props }: { children: React.ReactN
           }
         }
 
-        // Add some padding (e.g., 20px) to the maxBottom
-        container.style.height = `max(${maxBottom + 20}px, 100vh)`;
+        // Add some padding (e.g., 20px) to the maxBottom and use 1000px as the base
+        const roundedMaxBottom = Math.ceil(maxBottom / 500) * 500;
+        container.style.height = `max(${roundedMaxBottom}px, 100vh)`;
       }
     };
 
@@ -47,7 +48,7 @@ const DynamicHeightContainer = ({ children, ...props }: { children: React.ReactN
       ref={containerRef}
       style={{
         width: '100vw',
-        height: 'auto', // Initial height, will be updated by JavaScript
+        height: '100vh', // Initial height set to 100vh
         background: 'radial-gradient(circle, #ccc 1px, transparent 1px)',
         backgroundSize: '20px 20px',
         position: 'relative'

@@ -1,8 +1,8 @@
 'use client';
 
-import { Element } from '@/app/types';
+import { TextElement, Element } from '@/app/types';
 
-const TextAreaThatHandlesBackspace = ({ element, updateElement, deleteElement }: { element: Element, updateElement: (element: Element) => void, deleteElement: () => void }) => {
+const TextAreaThatHandlesBackspace = ({ element, updateElement, deleteElement }: { element: TextElement, updateElement: (element: Element) => void, deleteElement: () => void }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.stopPropagation();
     if (e.key === 'Backspace') {

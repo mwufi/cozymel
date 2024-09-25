@@ -83,6 +83,8 @@ function Viewer({ pageId }: ViewerProps) {
       addElement('twitter');
     } else if (e.key === 'y') {
       addElement('youtube');
+    } else if (e.key === 's') {
+      addElement('spotify');
     } else if (e.key === 'Backspace' && selectedElementId !== null) {
       deleteElement(pageId, selectedElementId);
       setSelectedElementId(null);
