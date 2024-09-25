@@ -11,7 +11,7 @@ const TextAreaThatHandlesBackspace = ({ element, updateElement, deleteElement }:
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!element.text || element.text.includes('delete fr')) {
+    if (element.text?.includes('delete from')) {
       deleteElement();
     } else {
       updateElement({ ...element, text: e.target.value });

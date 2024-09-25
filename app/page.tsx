@@ -10,6 +10,7 @@ import { elementsAtom } from './atoms';
 import { useAtom } from 'jotai';
 import { Element } from './types';
 import { renderElement } from '@/components/ElementRender';
+import DynamicHeightContainer from '@/components/DynamicHeightContainer';
 
 interface ViewerProps {
   pageId: string;
@@ -55,7 +56,7 @@ function Viewer({ pageId }: ViewerProps) {
   }, [isLoading, data])
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    mousePosition.current = { x: e.clientX, y: e.clientY };
+    mousePosition.current = { x: e.pageX, y: e.pageY };
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,6 +79,8 @@ function Viewer({ pageId }: ViewerProps) {
       addElement('diamond');
     } else if (e.key === 'v') {
       addElement('video');
+    } else if (e.key === 'x') {
+      addElement('twitter');
     } else if (e.key === 'Backspace' && selectedElementId !== null) {
       deleteElement(pageId, selectedElementId);
       setSelectedElementId(null);
@@ -104,20 +107,12 @@ function Viewer({ pageId }: ViewerProps) {
   };
 
   return (
-    <div
-      style={{
-        width: '100vw',
-        height: '100vh',
-        background: 'radial-gradient(circle, #ccc 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
-        position: 'relative'
-      }}
-      tabIndex={0}
+    <DynamicHeightContainer
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       onMouseMove={handleMouseMove}
     >
-
+      <div className='sticky top-0 left-0'>{JSON.stringify(mousePosition.current)}</div>
       <button
         style={{
           position: 'absolute',
@@ -152,7 +147,8 @@ function Viewer({ pageId }: ViewerProps) {
           </DraggableItem>
         );
       })}
-    </div>
+    </DynamicHeightContainer>
+
   );
 }
 

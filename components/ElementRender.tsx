@@ -5,6 +5,7 @@ import { Element } from '@/app/types';
 import TextAreaThatHandlesBackspace from '@/components/TextAreaThatHandlesBackspace';
 import Postcard from '@/components/Postcard';
 import BarChart from '@/components/charts/BarChart';
+import TwitterEmbed from '@/components/embeds/TwitterEmbed';
 
 export function renderElement(el: Element, updateElement: (element: Element) => void, deleteElement: () => void) {
   switch (el.type) {
@@ -16,6 +17,8 @@ export function renderElement(el: Element, updateElement: (element: Element) => 
       return <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls />;
     case 'diamond':
       return <Diamond />;
+    case 'twitter':
+      return <TwitterEmbed />;
     case 'image':
       return (
         <div style={{ maxWidth: '400px' }} className="border-4 overflow-hidden rounded-xl border-white shadow-xl">
