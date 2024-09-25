@@ -5,10 +5,10 @@ import { Element } from '@/app/types';
 import TextAreaThatHandlesBackspace from '@/components/TextAreaThatHandlesBackspace';
 import Postcard from '@/components/Postcard';
 
-export function renderElement(el: Element) {
+export function renderElement(el: Element, updateElement: (element: Element) => void) {
   switch (el.type) {
     case 'text':
-      return <TextAreaThatHandlesBackspace />;
+      return <TextAreaThatHandlesBackspace element={el} updateElement={updateElement} />;
     case 'postcard':
       return <Postcard />;
     case 'video':
@@ -17,12 +17,20 @@ export function renderElement(el: Element) {
       return <Diamond />;
     case 'image':
       return (
-        <div style={{ width: '400px' }}>
+        <div style={{ maxWidth: '400px' }} className="border-4 overflow-hidden rounded-xl border-white shadow-xl">
           <img
             src={el.image || "https://picsum.photos/200"}
             alt="Random"
             style={{ userSelect: 'none' }}
             draggable={false}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              const newSrc = prompt("Enter new image source:", el.image || "https://picsum.photos/200");
+              if (newSrc !== null) {
+                updateElement({ ...el, image: newSrc });
+              }
+            }}
           />
         </div>
       );

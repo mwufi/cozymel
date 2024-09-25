@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-import { saveElements, updateElement, updateMove } from '@/lib/utils';
+import { deleteElement, saveElements, updateElement, updateMove } from '@/lib/utils';
 import { toast } from 'sonner';
 import { db } from '@/lib/instant';
 import DraggableItem from '@/components/core/DraggableItem';
@@ -26,6 +26,9 @@ function Viewer({ pageId }: ViewerProps) {
     }
   }
   const { isLoading, data, error } = db.useQuery(query)
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
 
   const [elements, setElements] = useAtom(elementsAtom);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
@@ -61,10 +64,6 @@ function Viewer({ pageId }: ViewerProps) {
     function addElement(type: string, additionalProps?: Partial<Element>) {
       const newId = Date.now().toString();
       const newElement = { type, id: newId, x, y, ...additionalProps };
-
-      setElements(prevElements => {
-        return { ...prevElements, [newId]: newElement };
-      });
       updateElement(pageId, newId, newElement);
     }
 
@@ -77,11 +76,7 @@ function Viewer({ pageId }: ViewerProps) {
     } else if (e.key === 'v') {
       addElement('video');
     } else if (e.key === 'Backspace' && selectedElementId !== null) {
-      setElements(elements => {
-        const newElements = { ...elements };
-        delete newElements[selectedElementId];
-        return newElements;
-      });
+      deleteElement(pageId, selectedElementId);
       setSelectedElementId(null);
     }
   };
@@ -91,12 +86,6 @@ function Viewer({ pageId }: ViewerProps) {
 
     console.log("moving element", id, x, y)
     updateMove(pageId, id, x, y);
-    setElements(elements => {
-      const newElements = { ...elements };
-      newElements[id].x = x;
-      newElements[id].y = y;
-      return newElements;
-    });
   }
 
   return (
@@ -142,7 +131,7 @@ function Viewer({ pageId }: ViewerProps) {
             onUpdate={(id, x, y) => moveElement(id, x, y)}
           >
             {/* <div>{id} - {el.x}, {el.y}</div> */}
-            {renderElement(el)}
+            {renderElement(el, (element) => updateElement(pageId, id, element))}
           </DraggableItem>
         );
       })}

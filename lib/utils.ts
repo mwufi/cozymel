@@ -41,3 +41,12 @@ export function updateElement(pageId: string, elementId: string, element: Elemen
     })
   ]);
 }
+export function deleteElement(pageId: string, elementId: string) {
+  db.transact([
+    tx.pages[pageId].merge({
+      content: {
+        [elementId]: undefined
+      }
+    })
+  ]);
+}
