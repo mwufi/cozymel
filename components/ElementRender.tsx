@@ -6,6 +6,7 @@ import TextAreaThatHandlesBackspace from '@/components/TextAreaThatHandlesBacksp
 import Postcard from '@/components/Postcard';
 import BarChart from '@/components/charts/BarChart';
 import TwitterEmbed from '@/components/embeds/TwitterEmbed';
+import YoutubeEmbed from '@/components/embeds/YoutubeEmbed';
 
 export function renderElement(el: Element, updateElement: (element: Element) => void, deleteElement: () => void) {
   switch (el.type) {
@@ -19,6 +20,8 @@ export function renderElement(el: Element, updateElement: (element: Element) => 
       return <Diamond />;
     case 'twitter':
       return <TwitterEmbed />;
+    case 'youtube':
+      return <YoutubeEmbed />;
     case 'image':
       return (
         <div style={{ maxWidth: '400px' }} className="border-4 overflow-hidden rounded-xl border-white shadow-xl">
