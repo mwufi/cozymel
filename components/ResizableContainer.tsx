@@ -1,8 +1,8 @@
 import { Resizable } from 're-resizable';
 
-function ResizableContainer({ children }: { children: React.ReactNode }) {
+function ResizableContainer({ children, width = 600 }: { children: React.ReactNode, width?: number }) {
   return (
-    <Resizable defaultSize={{ width: 600, height: 400 }}>
+    <Resizable defaultSize={{ width: width, height: 400 }}>
       {children}
     </Resizable>
   )
